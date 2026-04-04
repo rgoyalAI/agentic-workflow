@@ -1,0 +1,42 @@
+# GCP GKE — Artifact Registry, Secret Manager CSI, GKE Ingress, Cloud Logging.
+image:
+  repository: us-central1-docker.pkg.dev/your-project/team/your-app
+  tag: "1.0.0"
+
+imagePullSecrets: []
+
+serviceAccount:
+  create: true
+  annotations:
+    iam.gke.io/gcp-service-account: your-app@your-project.iam.gserviceaccount.com
+
+podAnnotations:
+  # Cloud Logging structured logs via stdout; optional sidecar annotations if used
+  ad.datadoghq.com/enabled: "false"
+
+ingress:
+  enabled: true
+  className: gce
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    kubernetes.io/ingress.global-static-ip-name: "your-app-ip"
+    networking.gke.io/managed-certificates: your-app-managed-cert
+  hosts:
+    - host: app.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+extraVolumes:
+  - name: secrets-store-inline
+    csi:
+      driver: secrets-store.csi.k8s.io
+      readOnly: true
+      volumeAttributes:
+        secretProviderClass: gcp-secret-manager-your-app
+
+extraVolumeMounts:
+  - name: secrets-store-inline
+    mountPath: /mnt/secrets-store
+    readOnly: true

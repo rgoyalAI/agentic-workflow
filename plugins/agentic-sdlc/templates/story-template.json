@@ -1,0 +1,24 @@
+{
+  "id": "STORY-000",
+  "jira_key": "PROJ-123",
+  "title": "Concise action-oriented title",
+  "description": "Context, user value, and technical notes. Reference repo paths or ADRs when known; use null or \"missing-data\" for unknown fields.",
+  "acceptance_criteria": [
+    "Scenario: Short name\nGiven preconditions\nWhen the user performs the action\nThen observable outcome",
+    "Scenario: Error path\nGiven invalid input\nWhen submission occurs\nThen validation message is shown"
+  ],
+  "estimated_effort_days": null,
+  "story_points": null,
+  "dependencies": [],
+  "labels": ["feature", "backend"],
+  "language": "java",
+  "framework": "Spring Boot",
+  "status": "draft",
+  "retry_count": 0,
+  "source": {
+    "mode": "prompt",
+    "jira_key": "PROJ-123"
+  },
+  "effort": "M",
+  "repo_evidence": []
+}

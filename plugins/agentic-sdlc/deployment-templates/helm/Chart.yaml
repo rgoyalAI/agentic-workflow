@@ -1,0 +1,15 @@
+apiVersion: v2
+# Set `name` to your chart name (often the service name). Template convention: {{APP_NAME}}
+name: app-chart
+description: Base application chart — replace chart name and tune values for your service.
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - microservice
+  - web
+maintainers:
+  - name: platform-team
+    email: platform@example.com
+sources:
+  - https://example.com/your-repo

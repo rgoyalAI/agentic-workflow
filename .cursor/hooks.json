@@ -1,0 +1,127 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": ".cursor/hooks/sessionStart.ps1",
+        "shell": "powershell"
+      }
+    ],
+    "sessionEnd": [
+      {
+        "command": ".cursor/hooks/sessionEnd.ps1",
+        "shell": "powershell"
+      }
+    ],
+    "preToolUse": [
+      {
+        "command": ".cursor/hooks/preToolUse.ps1",
+        "shell": "powershell"
+      }
+    ],
+    "postToolUse": [
+      {
+        "command": ".cursor/hooks/postToolUse.ps1",
+        "shell": "powershell"
+      }
+    ],
+    "postToolUseFailure": [
+      {
+        "command": ".cursor/hooks/postToolUseFailure.ps1",
+        "shell": "powershell"
+      }
+    ],
+    "subagentStart": [
+      {
+        "command": ".cursor/hooks/subagentStart.ps1",
+        "shell": "powershell"
+      }
+    ],
+    "subagentStop": [
+      {
+        "command": ".cursor/hooks/subagentStop.ps1",
+        "shell": "powershell"
+      }
+    ],
+    "beforeShellExecution": [
+      {
+        "command": ".cursor/hooks/block-destructive.ps1",
+        "shell": "powershell",
+        "matcher": "rm|rmdir|del|Remove-Item|kubectl delete|DROP|TRUNCATE"
+      }
+    ],
+    "afterShellExecution": [
+      {
+        "command": ".cursor/hooks/afterShellExecution.ps1",
+        "shell": "powershell"
+      }
+    ],
+    "beforeMCPExecution": [
+      {
+        "command": ".cursor/hooks/beforeMCPExecution.ps1",
+        "shell": "powershell"
+      }
+    ],
+    "afterMCPExecution": [
+      {
+        "command": ".cursor/hooks/afterMCPExecution.ps1",
+        "shell": "powershell"
+      }
+    ],
+    "beforeReadFile": [
+      {
+        "command": ".cursor/hooks/beforeReadFile.ps1",
+        "shell": "powershell"
+      }
+    ],
+    "afterFileEdit": [
+      {
+        "command": ".cursor/hooks/audit-after-file-edit.ps1",
+        "shell": "powershell"
+      }
+    ],
+    "beforeSubmitPrompt": [
+      {
+        "command": ".cursor/hooks/beforeSubmitPrompt.ps1",
+        "shell": "powershell"
+      }
+    ],
+    "preCompact": [
+      {
+        "command": ".cursor/hooks/preCompact.ps1",
+        "shell": "powershell"
+      }
+    ],
+    "stop": [
+      {
+        "command": ".cursor/hooks/stop.ps1",
+        "shell": "powershell"
+      }
+    ],
+    "afterAgentResponse": [
+      {
+        "command": ".cursor/hooks/afterAgentResponse.ps1",
+        "shell": "powershell"
+      }
+    ],
+    "afterAgentThought": [
+      {
+        "command": ".cursor/hooks/afterAgentThought.ps1",
+        "shell": "powershell"
+      }
+    ],
+    "beforeTabFileRead": [
+      {
+        "command": ".cursor/hooks/beforeTabFileRead.ps1",
+        "shell": "powershell"
+      }
+    ],
+    "afterTabFileEdit": [
+      {
+        "command": ".cursor/hooks/afterTabFileEdit.ps1",
+        "shell": "powershell"
+      }
+    ]
+  }
+}
+

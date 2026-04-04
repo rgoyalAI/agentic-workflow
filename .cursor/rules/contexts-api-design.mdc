@@ -1,0 +1,15 @@
+---
+description: "Cursor: inject API design best practices from contexts/api-design.md"
+globs:
+  - "openapi*.yml"
+  - "openapi*.yaml"
+  - "openapi*.json"
+  - "swagger*.yml"
+  - "swagger*.yaml"
+  - "swagger*.json"
+  - "**/*.graphql"
+alwaysApply: false
+---
+
+@contexts/api-design.md
+

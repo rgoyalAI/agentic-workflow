@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "source": "prompt",
+  "source_id": "sha256-of-prompt-text",
+  "created_at": "2026-04-04T10:00:00Z",
+  "stories": [
+    {
+      "id": "STORY-001",
+      "jira_key": "PROJ-1235",
+      "title": "Implement user authentication API",
+      "description": "Create a REST API for user authentication with JWT tokens, supporting login, registration, and token refresh.",
+      "acceptance_criteria": [
+        "Given valid credentials, When POST /auth/login, Then return JWT token with 200",
+        "Given invalid credentials, When POST /auth/login, Then return 401 with error",
+        "Given expired token, When POST /auth/refresh, Then return new JWT token with 200",
+        "Given no token, When GET /auth/me, Then return 401"
+      ],
+      "estimated_effort_days": 3,
+      "story_points": 5,
+      "dependencies": [],
+      "labels": ["api", "security", "auth"],
+      "language": "java",
+      "framework": "spring-boot",
+      "status": "pending",
+      "retry_count": 0
+    },
+    {
+      "id": "STORY-002",
+      "jira_key": "PROJ-1236",
+      "title": "Add rate limiting middleware",
+      "description": "Implement token bucket rate limiting for API endpoints to prevent abuse.",
+      "acceptance_criteria": [
+        "Given a client exceeding 100 requests/minute, When any API call, Then return 429 with Retry-After header",
+        "Given a client within limits, When any API call, Then proceed normally"
+      ],
+      "estimated_effort_days": 2,
+      "story_points": 3,
+      "dependencies": ["STORY-001"],
+      "labels": ["api", "security"],
+      "language": "java",
+      "framework": "spring-boot",
+      "status": "pending",
+      "retry_count": 0
+    }
+  ]
+}

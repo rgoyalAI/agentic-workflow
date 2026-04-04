@@ -1,0 +1,42 @@
+# Template HorizontalPodAutoscaler — replace {{PLACEHOLDER}} values.
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{APP_NAME}}
+  namespace: {{NAMESPACE}}
+  labels:
+    app.kubernetes.io/name: {{APP_NAME}}
+    app.kubernetes.io/instance: {{RELEASE_NAME}}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{APP_NAME}}
+  minReplicas: {{HPA_MIN_REPLICAS}}
+  maxReplicas: {{HPA_MAX_REPLICAS}}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{HPA_CPU_TARGET_PERCENT}}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{HPA_MEMORY_TARGET_PERCENT}}
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: {{HPA_SCALE_DOWN_STABILIZATION}}
+      policies:
+        - type: Percent
+          value: 50
+          periodSeconds: 60
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      policies:
+        - type: Percent
+          value: 100
+          periodSeconds: 30

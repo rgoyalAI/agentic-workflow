@@ -1,0 +1,10 @@
+{
+  "model": "claude-opus-4-6",
+  "maxTokens": 200000,
+  "temperature": 0.1,
+  "permissions": {
+    "shell": true,
+    "fileSystem": true,
+    "mcp": true
+  }
+}

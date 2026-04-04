@@ -1,0 +1,92 @@
+{
+  "name": "Agentic SDLC Orchestrator",
+  "description": "Autonomous SDLC pipeline: decomposes requirements into stories, executes plan-design-implement-review-test-gate workflow with 16 specialized AI agents",
+  "version": "1.0.0",
+  "url": "/.well-known/agent.json",
+  "provider": {
+    "organization": "Agentic Workflow",
+    "url": "https://github.com/agentic-workflow"
+  },
+  "skills": [
+    {
+      "id": "decompose-requirements",
+      "name": "Decompose Requirements",
+      "description": "Parse raw prompt or Jira Feature/Epic ID into structured user stories with acceptance criteria, effort estimates, and dependency mapping",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "prompt": {"type": "string", "description": "Raw requirement text"},
+          "jira_id": {"type": "string", "description": "Jira Feature/Epic ID (e.g., PROJ-1234)"}
+        },
+        "oneOf": [{"required": ["prompt"]}, {"required": ["jira_id"]}]
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "source": {"type": "string", "enum": ["prompt", "jira"]},
+          "stories": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {"type": "string"},
+                "title": {"type": "string"},
+                "acceptance_criteria": {"type": "array", "items": {"type": "string"}},
+                "language": {"type": "string"},
+                "framework": {"type": "string"}
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "execute-story",
+      "name": "Execute Story Lifecycle",
+      "description": "Execute full SDLC lifecycle for a single story: plan, design, implement, review, test, deploy, gate",
+      "input_schema": {
+        "type": "object",
+        "required": ["story_id"],
+        "properties": {
+          "story_id": {"type": "string"}
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "story_id": {"type": "string"},
+          "status": {"type": "string", "enum": ["COMPLETE", "FAILED", "ESCALATED"]},
+          "quality_gate_report": {"type": "string"},
+          "pr_url": {"type": "string"}
+        }
+      }
+    },
+    {
+      "id": "generate-deployment",
+      "name": "Generate Deployment Artifacts",
+      "description": "Generate Dockerfiles, Kubernetes manifests, Helm charts, and CI/CD pipelines for multi-cloud deployment",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "language": {"type": "string"},
+          "framework": {"type": "string"},
+          "target_clouds": {"type": "array", "items": {"type": "string", "enum": ["onprem", "azure", "aws", "gcp"]}}
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "artifacts": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    }
+  ],
+  "protocols": ["A2A/1.0", "MCP/1.0"],
+  "authentication": {
+    "type": "bearer",
+    "required": false,
+    "description": "Optional bearer token for remote A2A invocation"
+  },
+  "supported_languages": ["java", "python", "go", "dotnet", "react", "angular"],
+  "supported_frameworks": ["spring-boot", "quarkus", "fastapi", "django", "flask", "gin", "echo", "clean-architecture"]
+}

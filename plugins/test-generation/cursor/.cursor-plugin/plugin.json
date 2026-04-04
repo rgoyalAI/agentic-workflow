@@ -1,0 +1,9 @@
+{
+  "name": "test-generation",
+  "version": "0.1.0",
+  "description": "Test planning and generation support for agentic coding workflows",
+  "author": {
+    "name": "Raj"
+  }
+}
+

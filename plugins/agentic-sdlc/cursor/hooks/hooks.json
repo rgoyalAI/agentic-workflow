@@ -1,0 +1,19 @@
+{
+  "hooks": [
+    {
+      "event": "preToolUse",
+      "script": "hooks/block-destructive.ps1",
+      "description": "Blocks force-push, hard reset, and destructive operations"
+    },
+    {
+      "event": "preToolUse",
+      "script": "hooks/enforce-approval-gate.ps1",
+      "description": "Pauses Tier 3 actions for human approval"
+    },
+    {
+      "event": "postToolUse",
+      "script": "hooks/rate-limit-retries.ps1",
+      "description": "Tracks retry counts and prevents runaway loops"
+    }
+  ]
+}

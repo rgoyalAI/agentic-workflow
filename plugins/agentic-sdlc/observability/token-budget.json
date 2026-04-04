@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Token Budget Allocation",
+  "description": "Maximum token budget per story phase and context window allocation percentages",
+  "phase_budgets": {
+    "DECOMPOSE": {"max_tokens": 100000, "description": "Requirement decomposition and story generation"},
+    "PLAN": {"max_tokens": 50000, "description": "Execution plan creation"},
+    "DESIGN": {"max_tokens": 75000, "description": "Architecture design and pattern selection"},
+    "IMPLEMENT": {"max_tokens": 200000, "description": "TDD code generation"},
+    "REVIEW": {"max_tokens": 100000, "description": "Per reviewer (x3 = 300K total for all reviews)"},
+    "TEST": {"max_tokens": 100000, "description": "Test generation + execution + coverage"},
+    "E2E": {"max_tokens": 75000, "description": "E2E test generation and execution"},
+    "DOCS": {"max_tokens": 50000, "description": "Documentation updates"},
+    "DEPLOY": {"max_tokens": 75000, "description": "Deployment artifact generation"},
+    "QUALITY_GATE": {"max_tokens": 50000, "description": "Quality gate aggregation"},
+    "COMPLETE": {"max_tokens": 25000, "description": "PR creation and Jira update"}
+  },
+  "context_window_allocation": {
+    "system_prompt_and_guardrails": 0.05,
+    "story_context": 0.15,
+    "code_diff_implementation": 0.40,
+    "agent_instructions_standards": 0.20,
+    "scratchpad_working_memory": 0.20
+  },
+  "session_spending_cap": {
+    "warn_at_percentage": 80,
+    "pause_at_percentage": 100,
+    "default_max_tokens_per_session": 2000000
+  },
+  "injection_budget": {
+    "max_injected_tokens_per_agent": 8000,
+    "fallback_to_file_reference": true
+  }
+}

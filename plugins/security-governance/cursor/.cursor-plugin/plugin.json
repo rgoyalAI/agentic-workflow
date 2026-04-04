@@ -1,0 +1,9 @@
+{
+  "name": "security-governance",
+  "version": "0.1.0",
+  "description": "Security governance rules/skills/agents/hooks for agentic coding workflows",
+  "author": {
+    "name": "Raj"
+  }
+}
+

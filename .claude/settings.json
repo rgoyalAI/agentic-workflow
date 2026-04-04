@@ -1,0 +1,29 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Evaluate whether the upcoming Bash command is safe to execute in an agentic coding workflow. Only allow read-only or test commands (ls, cat, grep, test, npm test, pytest, mvn test, go test, dotnet test). Block destructive commands (rm, rmdir, del, Remove-Item, kubectl delete) and destructive SQL (DROP, TRUNCATE). Input JSON: $ARGUMENTS. Respond with JSON only: {\"ok\": true} or {\"ok\": false, \"reason\": \"...\"}.",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "powershell",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/audit-edit.ps1"
+          }
+        ]
+      }
+    ]
+  }
+}
+

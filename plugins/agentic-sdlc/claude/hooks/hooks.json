@@ -1,0 +1,9 @@
+{
+  "hooks": [
+    {
+      "event": "preToolUse",
+      "script": "hooks/block-destructive.sh",
+      "description": "Blocks force-push, hard reset, and destructive DDL"
+    }
+  ]
+}

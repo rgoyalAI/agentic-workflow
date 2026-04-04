@@ -1,0 +1,11 @@
+{
+  "name": "agentic-sdlc",
+  "version": "1.0.0",
+  "description": "Autonomous SDLC pipeline with 16 specialized AI agents for Claude Code",
+  "author": { "name": "Raj" },
+  "keywords": ["agentic", "sdlc", "multi-agent", "quality-gate"],
+  "agents": "agents/",
+  "skills": "skills/",
+  "mcpServers": ".mcp.json",
+  "hooks": "hooks/"
+}

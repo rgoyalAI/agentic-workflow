@@ -1,0 +1,34 @@
+# Template Ingress — replace {{PLACEHOLDER}} values.
+# Ingress class and TLS vary by cluster (nginx, AGIC, ALB, GKE).
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{APP_NAME}}
+  namespace: {{NAMESPACE}}
+  labels:
+    app.kubernetes.io/name: {{APP_NAME}}
+    app.kubernetes.io/instance: {{RELEASE_NAME}}
+  annotations:
+    # Example: NGINX ingress controller
+    kubernetes.io/ingress.class: "{{INGRESS_CLASS}}"
+    nginx.ingress.kubernetes.io/ssl-redirect: "{{SSL_REDIRECT}}"
+    nginx.ingress.kubernetes.io/proxy-body-size: "{{MAX_BODY_SIZE}}"
+    # TLS: use cert-manager or platform-managed certs
+    cert-manager.io/cluster-issuer: "{{CLUSTER_ISSUER}}"
+spec:
+  ingressClassName: {{INGRESS_CLASS_NAME}}
+  tls:
+    - hosts:
+        - "{{INGRESS_HOST}}"
+      secretName: {{TLS_SECRET_NAME}}
+  rules:
+    - host: "{{INGRESS_HOST}}"
+      http:
+        paths:
+          - path: {{INGRESS_PATH}}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{APP_NAME}}
+                port:
+                  number: {{SERVICE_PORT}}

@@ -1,0 +1,11 @@
+---
+description: "Cursor: inject Python best practices from contexts/python.md"
+globs:
+  - "pyproject.toml"
+  - "requirements*.txt"
+  - "**/*.py"
+alwaysApply: false
+---
+
+@contexts/python.md
+

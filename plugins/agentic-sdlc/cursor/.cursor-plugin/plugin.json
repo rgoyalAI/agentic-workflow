@@ -1,0 +1,12 @@
+{
+  "name": "agentic-sdlc",
+  "version": "1.0.0",
+  "description": "Autonomous SDLC pipeline: decomposes requirements into stories, executes plan-design-implement-review-test-gate workflow with 16 specialized AI agents",
+  "author": {
+    "name": "Raj"
+  },
+  "keywords": ["agentic", "sdlc", "orchestration", "multi-agent", "quality-gate", "deployment", "jira", "github", "testing", "code-review", "security", "e2e", "coverage"],
+  "agents": "agents/",
+  "skills": "skills/",
+  "mcpServers": "mcp.json"
+}

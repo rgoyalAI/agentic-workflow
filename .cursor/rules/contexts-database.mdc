@@ -1,0 +1,12 @@
+---
+description: "Cursor: inject database best practices from contexts/database.md"
+globs:
+  - "**/*.sql"
+  - "migrations/**"
+  - "**/schema.prisma"
+  - "**/prisma/migrations/**"
+alwaysApply: false
+---
+
+@contexts/database.md
+

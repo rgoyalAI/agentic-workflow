@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Agent Trace Envelope",
+  "description": "Structured trace produced by every agent invocation for debugging and audit",
+  "type": "object",
+  "required": ["trace_id", "correlation_id", "agent", "story_id", "phase", "started_at", "completed_at", "duration_ms", "token_usage", "status", "risk_tier", "artifacts_produced", "retry_count"],
+  "properties": {
+    "trace_id": {"type": "string", "format": "uuid", "description": "Unique identifier for this trace"},
+    "correlation_id": {"type": "string", "format": "uuid", "description": "Shared across all agents in a single story execution"},
+    "agent": {"type": "string", "enum": ["OrchestrateSDLC", "DecomposeRequirements", "PlanStory", "DesignArchitecture", "ImplementCode", "ReviewCode", "ReviewArchitecture", "ReviewSecurity", "GenerateTests", "RunTests", "ValidateCoverage", "GenerateE2E", "GenerateDeployment", "UpdateDocumentation", "QualityGate", "CompleteStory"]},
+    "story_id": {"type": "string"},
+    "phase": {"type": "string", "enum": ["DECOMPOSE", "PLAN", "DESIGN", "IMPLEMENT", "REVIEW", "TEST", "COVERAGE", "E2E", "DOCS", "DEPLOY", "QUALITY_GATE", "COMPLETE"]},
+    "started_at": {"type": "string", "format": "date-time"},
+    "completed_at": {"type": "string", "format": "date-time"},
+    "duration_ms": {"type": "integer", "minimum": 0},
+    "token_usage": {
+      "type": "object",
+      "properties": {
+        "input_tokens": {"type": "integer"},
+        "output_tokens": {"type": "integer"},
+        "model": {"type": "string"}
+      }
+    },
+    "status": {"type": "string", "enum": ["success", "failure", "error", "skipped"]},
+    "risk_tier": {"type": "integer", "minimum": 1, "maximum": 3},
+    "artifacts_produced": {"type": "array", "items": {"type": "string"}},
+    "parent_trace_id": {"type": "string", "format": "uuid"},
+    "retry_count": {"type": "integer", "minimum": 0}
+  }
+}

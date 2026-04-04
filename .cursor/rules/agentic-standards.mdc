@@ -1,0 +1,12 @@
+---
+description: "Project-wide agentic standards aligned to AGENTS.md"
+alwaysApply: true
+---
+
+Follow `AGENTS.md` as the highest-priority instruction.
+
+When delegating to specialists/subagents:
+- Include the A2A envelope verbatim (from `AGENTS.md`).
+- Provide `loaded_context` as the list of contexts actually loaded (or `[]` if none).
+- If evidence is missing, output `missing-data` instead of guessing.
+

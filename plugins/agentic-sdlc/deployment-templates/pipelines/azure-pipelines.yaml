@@ -1,0 +1,163 @@
+# Azure DevOps multi-stage pipeline — lint, test, Docker build, push to ACR, Trivy scan, deploy to AKS.
+# Add to repo as `azure-pipelines.yml` and create pipeline in Azure DevOps pointing to this file.
+#
+# Required variable group (Library): e.g. `prod-secrets` with ACR_NAME, AKS_RG, AKS_NAME (non-secret where possible).
+# Service connections: `azure-subscription` (ARM), optional `kubernetes-service-connection` for Helm deploy.
+
+trigger:
+  branches:
+    include:
+      - main
+      - develop
+
+pr:
+  branches:
+    include:
+      - main
+
+variables:
+  imageRepository: "$(Build.Repository.Name)"
+  dockerfilePath: "$(Build.SourcesDirectory)/Dockerfile"
+  tag: "$(Build.BuildId)-$(Build.SourceVersion)"
+  vmImageName: "ubuntu-latest"
+
+stages:
+  - stage: Lint
+    displayName: Lint
+    jobs:
+      - job: LintJob
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          - checkout: self
+            fetchDepth: 0
+          - script: |
+              echo "Add ESLint, dotnet format, Maven/Gradle verify (skip tests), etc."
+            displayName: Run linters
+
+  - stage: Test
+    displayName: Test
+    dependsOn: Lint
+    jobs:
+      - job: TestJob
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          - checkout: self
+          - script: |
+              echo "Replace with unit test command"
+            displayName: Unit tests
+
+  - stage: BuildAndPush
+    displayName: Build and push image
+    dependsOn: Test
+    jobs:
+      - job: Docker
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          - checkout: self
+
+          - task: Docker@2
+            displayName: Build image
+            inputs:
+              command: build
+              repository: $(imageRepository)
+              dockerfile: $(dockerfilePath)
+              buildContext: "$(Build.SourcesDirectory)"
+              tags: |
+                $(tag)
+                latest
+
+          - task: AzureCLI@2
+            displayName: Azure CLI login (OIDC / workload identity)
+            inputs:
+              azureSubscription: "azure-subscription"
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                az acr login --name $(ACR_NAME)
+
+          - task: Docker@2
+            displayName: Push image to ACR
+            inputs:
+              command: push
+              containerRegistry: "$(ACR_SERVICE_CONNECTION)"
+              repository: $(imageRepository)
+              tags: |
+                $(tag)
+
+  - stage: SecurityScan
+    displayName: Scan image
+    dependsOn: BuildAndPush
+    jobs:
+      - job: Trivy
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          - script: |
+              sudo apt-get update && sudo apt-get install -y wget
+              wget -qO - https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
+              trivy image --exit-code 1 --severity HIGH,CRITICAL \
+                "$(ACR_LOGIN_SERVER)/$(imageRepository):$(tag)"
+            displayName: Trivy vulnerability scan
+            env:
+              ACR_LOGIN_SERVER: $(ACR_LOGIN_SERVER)
+
+  - stage: DeployStaging
+    displayName: Deploy Staging
+    dependsOn: SecurityScan
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
+    jobs:
+      - deployment: DeployStagingAKS
+        environment: staging
+        pool:
+          vmImage: $(vmImageName)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - task: HelmDeploy@0
+                  displayName: Helm upgrade (staging)
+                  inputs:
+                    connectionType: Kubernetes Service Connection
+                    kubernetesServiceConnection: kubernetes-staging
+                    namespace: staging
+                    command: upgrade
+                    chartType: FilePath
+                    chartPath: deployment-templates/helm
+                    releaseName: $(imageRepository)
+                    valueFile: deployment-templates/helm/values-staging.yaml
+                    arguments: >-
+                      --set image.repository=$(ACR_LOGIN_SERVER)/$(imageRepository)
+                      --set image.tag=$(tag)
+
+  - stage: DeployProd
+    displayName: Deploy Production
+    dependsOn: SecurityScan
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - deployment: DeployProdAKS
+        environment: production
+        pool:
+          vmImage: $(vmImageName)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - task: HelmDeploy@0
+                  displayName: Helm upgrade (production)
+                  inputs:
+                    connectionType: Kubernetes Service Connection
+                    kubernetesServiceConnection: kubernetes-prod
+                    namespace: production
+                    command: upgrade
+                    chartType: FilePath
+                    chartPath: deployment-templates/helm
+                    releaseName: $(imageRepository)
+                    valueFile: deployment-templates/helm/values-prod.yaml
+                    arguments: >-
+                      --set image.repository=$(ACR_LOGIN_SERVER)/$(imageRepository)
+                      --set image.tag=$(tag)

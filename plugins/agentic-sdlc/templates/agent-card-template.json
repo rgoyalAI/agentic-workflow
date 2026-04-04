@@ -1,0 +1,32 @@
+{
+  "_comment": "Template for creating A2A-compatible Agent Cards. Replace {{PLACEHOLDERS}} with actual values.",
+  "name": "{{AGENT_NAME}}",
+  "description": "{{AGENT_DESCRIPTION}}",
+  "version": "{{VERSION}}",
+  "url": "/.well-known/agent.json",
+  "provider": {
+    "organization": "{{ORGANIZATION}}",
+    "url": "{{ORGANIZATION_URL}}"
+  },
+  "skills": [
+    {
+      "id": "{{SKILL_ID}}",
+      "name": "{{SKILL_NAME}}",
+      "description": "{{SKILL_DESCRIPTION}}",
+      "input_schema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {}
+      }
+    }
+  ],
+  "protocols": ["A2A/1.0"],
+  "authentication": {
+    "type": "bearer",
+    "required": false
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "agentic-workflow-marketplace",
+  "owner": {
+    "name": "Raj"
+  },
+  "metadata": {
+    "description": "Example multi-IDE agentic plugin set"
+  },
+  "plugins": [
+    {
+      "name": "security-governance",
+      "source": "plugins/security-governance/cursor",
+      "description": "Security governance rules/skills/agents for agentic coding workflows"
+    },
+    {
+      "name": "test-generation",
+      "source": "plugins/test-generation/cursor",
+      "description": "Test planning and generation support for agentic coding workflows"
+    },
+    {
+      "name": "adm",
+      "source": "plugins/adm/cursor",
+      "description": "Base agentic development management rules/skills/agents for planning, implementation, and verification"
+    },
+    {
+      "name": "agentic-sdlc",
+      "source": "plugins/agentic-sdlc/cursor",
+      "description": "Autonomous SDLC pipeline: decomposes requirements into stories, executes plan-design-implement-review-test-gate workflow with 16 specialized AI agents across Cursor, Claude Code, and GitHub Copilot"
+    }
+  ]
+}
+

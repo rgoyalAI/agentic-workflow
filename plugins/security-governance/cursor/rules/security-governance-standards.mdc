@@ -1,0 +1,11 @@
+---
+description: Security standards aligned to AGENTS.md
+alwaysApply: false
+globs:
+  - "**/*"
+---
+Security governance rule set:
+- Always follow `AGENTS.md` as the single source of truth.
+- Prefer least-privilege changes; never disable auth or TLS.
+- When you cannot verify evidence from repo context, report `missing-data`.
+

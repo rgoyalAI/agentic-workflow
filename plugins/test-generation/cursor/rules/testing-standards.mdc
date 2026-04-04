@@ -1,0 +1,12 @@
+---
+description: Testing standards aligned to AGENTS.md
+alwaysApply: false
+globs:
+  - "**/*"
+---
+Testing standards:
+- Prefer deterministic tests (no wall-clock dependent assertions).
+- Use existing test patterns and libraries from the repo.
+- Include negative-path and edge-case coverage.
+- If you cannot infer expected behavior from repo context, report `missing-data`.
+

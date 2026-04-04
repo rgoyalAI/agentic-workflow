@@ -1,0 +1,12 @@
+---
+description: "Cursor: inject Java best practices from contexts/java.md"
+globs:
+  - "pom.xml"
+  - "build.gradle"
+  - "build.gradle.kts"
+  - "**/*.java"
+alwaysApply: false
+---
+
+@contexts/java.md
+

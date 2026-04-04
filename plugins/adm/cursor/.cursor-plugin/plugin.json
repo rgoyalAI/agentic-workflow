@@ -1,0 +1,13 @@
+{
+  "name": "adm",
+  "version": "0.1.0",
+  "description": "Complete automation of development of applications based on user stories",
+  "author": {
+    "name": "Raj"
+  },
+  "keywords": ["agentic", "development", "management","slc","jira","github","atlassian","copilot","planning","automation", "remediation","testing"],
+  "agents": "agents/",
+  "skills": "skills/",
+  "mcpServers": "mcp.json"
+}
+

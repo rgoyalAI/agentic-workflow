@@ -1,0 +1,19 @@
+---
+description: Agentic SDLC base standards aligned to AGENTS.md
+alwaysApply: true
+globs:
+  - "**/*"
+---
+
+Agentic SDLC base standards:
+
+- Always follow `AGENTS.md` as the single source of truth for orchestration, security, testing, and documentation expectations.
+- Use the deterministic context-loading protocol from `AGENTS.md` before planning or writing code (language context first, then domain contexts in fixed order). If a context file is missing, do not invent it; record what was skipped.
+- Treat all external input as untrusted: validate types, bounds, and intent at boundaries; sanitize before persistence, shell use, or downstream agents.
+- If evidence is missing or cannot be verified from the repo or approved tools, report `missing-data` explicitly instead of guessing.
+- Follow `standards/coding/*.md` for all code generation: naming, exceptions, concurrency, I/O, validation, crypto, performance, and readability.
+- Follow `standards/project-structures/*.md` for folder layout according to the detected language and framework.
+- Follow `standards/ui/*.md` for all frontend code generation: design tokens, atomic design, and accessibility.
+- Enforce quality gates before story completion: code compiles; tests pass; coverage is greater than or equal to 80 percent; no Critical or Major findings from reviews; end-to-end tests pass.
+- Use git checkpoints after each major phase so the workspace can roll back to a known-good state.
+- Maximum three retries per story before escalating to a human with a concise failure summary and required decisions.

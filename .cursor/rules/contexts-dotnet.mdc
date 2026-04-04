@@ -1,0 +1,11 @@
+---
+description: "Cursor: inject .NET best practices from contexts/dotnet.md"
+globs:
+  - "global.json"
+  - "**/*.csproj"
+  - "**/*.cs"
+alwaysApply: false
+---
+
+@contexts/dotnet.md
+

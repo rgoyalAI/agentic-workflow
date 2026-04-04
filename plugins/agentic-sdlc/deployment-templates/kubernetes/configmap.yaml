@@ -1,0 +1,25 @@
+# Template ConfigMap — non-sensitive application configuration only.
+# Replace {{PLACEHOLDER}} values. Do not store secrets here.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{CONFIGMAP_NAME}}
+  namespace: {{NAMESPACE}}
+  labels:
+    app.kubernetes.io/name: {{APP_NAME}}
+    app.kubernetes.io/instance: {{RELEASE_NAME}}
+data:
+  APP_ENV: "{{APP_ENV}}"
+  LOG_LEVEL: "{{LOG_LEVEL}}"
+  SERVER_PORT: "{{CONTAINER_PORT}}"
+  # Public URLs, feature flags (non-secret), external API base URLs without keys
+  PUBLIC_BASE_URL: "{{PUBLIC_BASE_URL}}"
+  # Example structured config (YAML or properties as needed)
+  application.yaml: |
+    server:
+      port: {{CONTAINER_PORT}}
+    management:
+      endpoints:
+        web:
+          exposure:
+            include: health,info,prometheus
