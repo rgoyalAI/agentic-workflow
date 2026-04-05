@@ -23,12 +23,22 @@ Execute the **appropriate automated test command** for the detected language/fra
 
 5. **Write** `./context/test-results.json` with aggregates and per-failure details.
 
+### Pre-test compilation
+
+Before running tests, ensure the project compiles. Use the appropriate build command:
+- Java / Maven: `mvn compile test-compile` (then `mvn test`)
+- Java / Gradle: `./gradlew compileJava compileTestJava` (then `./gradlew test`)
+- .NET: `dotnet build` (then `dotnet test`)
+- Go: `go build ./...` (then `go test ./...`)
+
+If IDE auto-compilation produces class files with a different JDK version, run `mvn clean test` or `./gradlew clean test` to clear stale artifacts. Build-tool `clean` targets are safe—they only remove the `target/` or `build/` directory.
+
 ### Command map (deterministic defaults)
 
 | Stack | Command |
 |--------|---------|
-| Java / Maven | `mvn test` |
-| Java / Gradle | `./gradlew test` (Windows: `gradlew.bat test`) |
+| Java / Maven | `mvn clean test` (prefer clean to avoid stale class files) |
+| Java / Gradle | `./gradlew clean test` (Windows: `gradlew.bat clean test`) |
 | Python (pytest) | `pytest` |
 | Python (Django) | `python manage.py test` |
 | .NET | `dotnet test` |

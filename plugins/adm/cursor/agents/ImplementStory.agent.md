@@ -75,6 +75,12 @@ If the manifest is NOT found (e.g., invoked outside the ExecuteStory pipeline):
 - **Every acceptance criterion must be covered by at least one test.**
 - **All tests must pass before reporting completion.**
 - **Follow TDD principles and all standards defined in the instruction files** loaded in Step 3.
+- **Dependency extras**: when declaring dependencies, always include required optional features (Python: `pydantic[email]`, `uvicorn[standard]`; Java: provider-specific starters; .NET: EF Core provider packages). A bare package that installs but fails on an optional import at runtime is a blocking defect.
+- **Exception handling**: never catch broad exception types (`ValueError`, `Exception`) at API boundaries — library code also raises these, silently mapping unrelated errors to wrong status codes. Define domain-specific exception classes.
+- **Password hashing**: for Python, use `bcrypt` directly (NOT `passlib[bcrypt]` — incompatible with `bcrypt >= 4.1`).
+- **Test database isolation**: **never use file-based databases** in async tests — use in-memory with shared connections (Python: `StaticPool`; Java: `H2 mem`; .NET: `DataSource=:memory:`). File-based embedded databases cause cross-connection isolation bugs. Always drop then recreate schema in setup before each test.
+- **Framework-controlled status codes**: do not hard-code exact HTTP status codes for framework middleware responses. Use range checks for framework-controlled responses; exact assertions only for application-defined responses.
+- **Fixture resilience**: assert response status before extracting fields in test fixtures to prevent opaque error cascades masking the real failure.
 
 **Execution strategy is yours to determine.** Decide how to decompose, batch, and sequence the work based on the story's size and complexity. You may write all tests at once or one component at a time — optimize for correctness and efficiency, not ceremony.
 

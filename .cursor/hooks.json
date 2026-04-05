@@ -47,7 +47,7 @@
       {
         "command": ".cursor/hooks/block-destructive.ps1",
         "shell": "powershell",
-        "matcher": "rm|rmdir|del|Remove-Item|kubectl delete|DROP|TRUNCATE"
+        "matcher": "rm\\s+-r|rmdir|del\\s+/|Remove-Item.*-Recurse|kubectl delete|DROP\\s+TABLE|DROP\\s+DATABASE|TRUNCATE|git push.*-f|git reset --hard"
       }
     ],
     "afterShellExecution": [

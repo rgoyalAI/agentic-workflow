@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "Evaluate whether the upcoming Bash command is safe to execute in an agentic coding workflow. Only allow read-only or test commands (ls, cat, grep, test, npm test, pytest, mvn test, go test, dotnet test). Block destructive commands (rm, rmdir, del, Remove-Item, kubectl delete) and destructive SQL (DROP, TRUNCATE). Input JSON: $ARGUMENTS. Respond with JSON only: {\"ok\": true} or {\"ok\": false, \"reason\": \"...\"}.",
+            "prompt": "Evaluate whether the upcoming Bash command is safe to execute in an agentic coding workflow. ALLOW: read-only commands (ls, cat, grep, find, head, tail, wc, file, which, where, echo, type), version/help commands (*--version, *--help), build-tool lifecycle commands (mvn clean/compile/test/verify/package/install, gradle/gradlew clean/build/test, dotnet clean/build/test/publish, go build/test/clean, cargo build/test/clean, npm run build/test/clean, pip install, python setup.py), test commands (npm test, pytest, mvn test, go test, dotnet test, jest, vitest), lint/format commands (eslint, prettier, ruff, black, gofmt, dotnet format), git read commands (git status, git log, git diff, git branch, git show), docker build, and package manager installs (npm install, pip install, poetry install, bundle install). BLOCK: destructive filesystem operations (rm -rf /, rm -rf ~, del /s /q on system dirs), destructive SQL (DROP TABLE, DROP DATABASE, TRUNCATE TABLE, DELETE FROM without WHERE), destructive git (git push --force, git push -f, git reset --hard), and kubectl delete. Input JSON: $ARGUMENTS. Respond with JSON only: {\"ok\": true} or {\"ok\": false, \"reason\": \"...\"}.",
             "timeout": 10
           }
         ]
@@ -26,4 +26,3 @@
     ]
   }
 }
-

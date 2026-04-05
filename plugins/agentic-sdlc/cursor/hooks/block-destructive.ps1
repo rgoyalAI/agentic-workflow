@@ -2,6 +2,8 @@
 <#
 .SYNOPSIS
   preToolUse hook: blocks destructive git, shell, and SQL patterns.
+  Allows build-tool lifecycle commands (mvn clean, gradle clean, etc.)
+  because these only remove build artifacts, not source code.
   Reads JSON tool event from stdin; inspects command/text fields.
 #>
 
@@ -24,6 +26,28 @@ function Get-InspectableText {
 
 $haystack = (Get-InspectableText -Json $raw).ToLowerInvariant()
 
+# --- Allowlist: build-tool lifecycle commands that are safe ---
+$buildToolPatterns = @(
+    'mvn\s+(clean|compile|test|verify|package|install)',
+    'mvnw\s+(clean|compile|test|verify|package|install)',
+    'gradlew?\s+(clean|build|test|check|assemble)',
+    'gradle\s+(clean|build|test|check|assemble)',
+    'dotnet\s+(clean|build|test|publish|restore)',
+    'go\s+(clean|build|test)',
+    'cargo\s+(clean|build|test)',
+    'npm\s+(run\s+)?(clean|build|test|install)',
+    'pip\s+install',
+    'poetry\s+install',
+    'bundle\s+install'
+)
+
+foreach ($bp in $buildToolPatterns) {
+    if ($haystack -match $bp) {
+        exit 0
+    }
+}
+
+# --- Blocklist: truly destructive patterns ---
 $blocklist = @(
     @{ Pattern = 'git push --force'; Reason = 'Force-push can rewrite shared history.'; Alt = 'Use revert commits or a repair branch coordinated with the team.' }
     @{ Pattern = 'git push -f'; Reason = 'Short force-push can rewrite shared history.'; Alt = 'Use revert commits or a repair branch coordinated with the team.' }
@@ -42,7 +66,7 @@ foreach ($entry in $blocklist) {
     }
 }
 
-# DELETE FROM without WHERE (heuristic: line contains delete from and not 'where')
+# DELETE FROM without WHERE (heuristic)
 if ($haystack -match 'delete\s+from\s+') {
     if ($haystack -notmatch '\bwhere\b') {
         Write-Error '[GUARDRAIL BLOCKED] DELETE without WHERE can wipe a whole table. Alternative: add a WHERE clause or use an approved batch job.'

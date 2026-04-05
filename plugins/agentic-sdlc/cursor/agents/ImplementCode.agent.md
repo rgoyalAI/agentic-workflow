@@ -118,7 +118,24 @@ Use the project’s real scripts; examples only:
 
 Record exact commands run in **Execution Summary**. If a command is unknown, search for `package.json`, `pom.xml`, or `pyproject.toml` first.
 
-### 7. Observability and security while coding
+### 7. Dependency extras verification
+
+Before considering implementation complete, verify that every optional feature used in code has its extras declared in the dependency manifest:
+- Python: `pydantic[email]` for `EmailStr`, `uvicorn[standard]` for reload/watch, `sqlalchemy[asyncio]` for async engines, `passlib[bcrypt]` for bcrypt hashing, `python-jose[cryptography]` for JWT.
+- Node: peer dependencies and optional deps (e.g., `@types/*` for TypeScript).
+- Java: optional Maven/Gradle dependencies must be scoped correctly.
+
+A bare package name that installs successfully but fails at runtime on an optional import is a **blocking defect**. Check import paths against the manifest.
+
+### 7b. Exception handling at API boundaries
+
+Never catch broad exception types (`ValueError`, `Exception`, `RuntimeException`) at API route handlers to map to HTTP status codes. Library code (bcrypt, ORM, serializers) also raises these base types, causing unrelated internal errors to be silently returned as wrong status codes (e.g., a bcrypt error masquerading as "email already exists" 409). Always define **domain-specific exception classes** (`DuplicateEmailError`, `InvalidCredentialsError`, `NotFoundException`) and catch only those at the boundary.
+
+### 7c. Password hashing library compatibility
+
+For Python: use `bcrypt` directly (`bcrypt.hashpw`/`bcrypt.checkpw`), NOT `passlib[bcrypt]`. The `passlib` library is incompatible with `bcrypt >= 4.1` and produces misleading `ValueError` exceptions. For .NET: use `BCrypt.Net-Next` (actively maintained), not the original `BCrypt.Net`.
+
+### 8. Observability and security while coding
 
 - Prefer structured logging and correlation IDs where the codebase already uses them.
 - Never commit secrets; use env vars or secret managers per `standards/coding/*.md`.

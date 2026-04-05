@@ -22,12 +22,19 @@ This document defines **mandatory** algorithms, libraries, and practices for enc
 | Language | Crypto Library | Password Hashing | Secure Random |
 |----------|---------------|-----------------|---------------|
 | Java | `javax.crypto`, Bouncy Castle | `BCryptPasswordEncoder` (Spring Security) | `SecureRandom` |
-| Python | `cryptography` library (Fernet, AES), `hashlib` | `bcrypt` or `argon2-cffi` | `secrets.token_urlsafe()`, `os.urandom()` |
+| Python | `cryptography` library (Fernet, AES), `hashlib` | `bcrypt` directly (**not** `passlib`) or `argon2-cffi` | `secrets.token_urlsafe()`, `os.urandom()` |
 | Go | `crypto/aes`, `crypto/cipher`, `golang.org/x/crypto` | `golang.org/x/crypto/bcrypt` | `crypto/rand.Read()` |
 | C# / .NET | `System.Security.Cryptography` | `BCrypt.Net` or ASP.NET Identity `PasswordHasher<T>` | `RandomNumberGenerator.GetBytes()` |
 | TypeScript | `crypto` (Node.js built-in), `jose` for JWTs | `bcrypt` or `argon2` npm packages | `crypto.randomBytes()`, `crypto.randomUUID()` |
 
 ---
+
+## Password hashing: library compatibility warnings
+
+- **Python**: Use `bcrypt` package directly (`bcrypt.hashpw` / `bcrypt.checkpw`). Do **NOT** use `passlib[bcrypt]` — `passlib` has not been updated for `bcrypt >= 4.1` and produces misleading `ValueError` exceptions ("password cannot be longer than 72 bytes") even for short passwords. If a project already uses `passlib`, pin `bcrypt<4.1.0` explicitly.
+- **Node.js**: Use the `bcrypt` or `bcryptjs` npm packages directly. Avoid wrapper libraries that may lag behind upstream API changes.
+- **Java**: `BCryptPasswordEncoder` from Spring Security is maintained and safe. Avoid deprecated or unmaintained bcrypt wrappers.
+- **.NET**: `BCrypt.Net-Next` is the actively maintained fork. Do not use the original `BCrypt.Net` which is unmaintained.
 
 ## JWT and tokens
 

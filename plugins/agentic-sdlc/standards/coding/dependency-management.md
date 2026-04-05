@@ -76,6 +76,7 @@ This document defines how dependencies MUST be declared, locked, audited, and or
 - Committing `node_modules` or `.venv` unless project explicitly requires it (generally avoid).
 - **Dependency confusion**: always scope private registries and verify package provenance.
 - **Pinning only in comments** while `package.json` still uses ranges—source of truth must be the lockfile + semver policy.
+- **Missing extras/optional features**: when code uses an optional sub-feature of a package (e.g., `pydantic.EmailStr` requires `pydantic[email]`, `uvicorn` ASGI extras require `uvicorn[standard]`, `sqlalchemy` async requires `sqlalchemy[asyncio]`), the manifest MUST declare the extras bracket. A bare package name causes `ImportError` at runtime even though the base package installs successfully. Agents MUST verify that every optional import used in code has its corresponding extra declared in the dependency manifest.
 
 Agents MUST generate manifests with pinned versions and reference this document when adding dependencies.
 
