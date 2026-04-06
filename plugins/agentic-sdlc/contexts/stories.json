@@ -15,6 +15,7 @@
         "Given expired token, When POST /auth/refresh, Then return new JWT token with 200",
         "Given no token, When GET /auth/me, Then return 401"
       ],
+      "requirement_refs": ["CAP-001", "CAP-002", "CAP-003"],
       "estimated_effort_days": 3,
       "story_points": 5,
       "dependencies": [],
@@ -33,6 +34,7 @@
         "Given a client exceeding 100 requests/minute, When any API call, Then return 429 with Retry-After header",
         "Given a client within limits, When any API call, Then proceed normally"
       ],
+      "requirement_refs": ["CAP-004"],
       "estimated_effort_days": 2,
       "story_points": 3,
       "dependencies": ["STORY-001"],

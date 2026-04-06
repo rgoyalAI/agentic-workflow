@@ -1,0 +1,34 @@
+---
+description: "Manual planning mode — activate with 'use planning mode' for complex tasks that need design before implementation"
+---
+
+# Planning Mode
+
+When this mode is activated, follow this structured approach before writing any code:
+
+## 1. Clarify the problem
+- Ask 3-5 specific clarifying questions about scope, constraints, and success criteria
+- Identify ambiguities that could lead to wrong implementation
+
+## 2. Check existing context
+- Read `contexts/PROJECT_CONTEXT.md` for project orientation
+- Search `./context/stories.json` for related stories
+- Check `./memory/` for prior decisions and progress
+- Load relevant `contexts/*.md` per the `AGENTS.md` deterministic protocol
+
+## 3. Create a plan
+- List affected files (new, modify, remove)
+- Define sub-tasks with dependencies
+- Identify risks and open questions
+- Specify test strategy (what tests prove it works)
+
+## 4. Get approval
+- Present the plan with clear trade-offs
+- Wait for explicit approval before implementing
+- If the user says "go ahead" or "approved", proceed to implementation
+- If the user requests changes, revise the plan first
+
+## Rules
+- Never start coding before the plan is approved
+- Surface assumptions explicitly — do not guess silently
+- If the task is simple enough that planning is overhead, say so and ask if the user wants to skip to implementation

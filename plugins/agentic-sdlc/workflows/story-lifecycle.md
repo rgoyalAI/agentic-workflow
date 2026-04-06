@@ -10,6 +10,7 @@ This document walks through **one story** end to end using a concrete example: *
 - **jira_key:** `PROJ-1235`  
 - **title:** Implement user authentication API  
 - **description:** REST API for user authentication with JWT: login, registration, token refresh.  
+- **requirement_refs:** `["CAP-001", "CAP-002", "CAP-003"]`  
 - **language / framework:** `java` / `spring-boot`  
 
 The orchestrator loads this story from `./context/stories.json` (or the project’s configured context root).

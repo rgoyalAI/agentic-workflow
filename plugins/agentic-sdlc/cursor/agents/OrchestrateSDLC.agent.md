@@ -65,6 +65,7 @@ Use this map when delegating; the orchestrator itself runs on the configured orc
 | Reviews | `ReviewCode`, `ReviewArchitecture`, `ReviewSecurity` | Parallel when possible |
 | Tests | `GenerateTests`, `RunTests`, `ValidateCoverage` | Order: generate → run → coverage |
 | E2E / broader validation | `GenerateE2E` (+ `RunTests` as needed) | Parallel group in Phase 6 where safe |
+| Performance tests | `GeneratePerformanceTests` | Parallel in Phase 6; smoke + load baseline |
 | Docs / deploy | `UpdateDocumentation`, `GenerateDeployment` | With checkpoints |
 | Gate | `QualityGate` | Aggregates metrics and findings |
 | Closure | `CompleteStory` | PR/Jira closure after gate |
@@ -94,11 +95,14 @@ When escalating to a human, provide:
 
 <workflow>
 
-## Phase 0 — Parse input
+## Phase 0 — Parse input, resume memory, establish project context
 
 1. Determine whether the user provided **raw prompt** vs **Jira ID** (pattern like `PROJECT-123`, optional cloud/instance hints from session).
 2. If Jira: fetch Epic/Feature scope via Atlassian MCP as required by **`DecomposeRequirements`** inputs.
-3. Initialize or update **`./context/sdlc-session.json`**: `inputType`, `sourceId`, `startedAt`, `storiesPath` (default `./context/stories.json`).
+3. Invoke **`session-resume`** — load `./memory/` bank for cross-session continuity. If it returns "first run", proceed; the summary feeds into downstream A2A envelopes.
+4. If `./memory/` directory is missing, invoke **`scaffold-memory`** to create the directory structure.
+5. If `contexts/PROJECT_CONTEXT.md` is missing or contains only placeholder text, invoke **`generate-project-context`** to scan the repo and produce it.
+6. Initialize or update **`./context/sdlc-session.json`**: `inputType`, `sourceId`, `startedAt`, `storiesPath` (default `./context/stories.json`).
 
 If parsing fails or Jira is unreachable after reasonable retry, **STOP** with `missing-data`.
 
@@ -149,8 +153,9 @@ For **each story** in order (respect dependencies):
 ### Phase 6 — Parallel work (where independent)
 
 - **Track A**: **`GenerateE2E`** and execute via **`RunTests`** (or E2E runner per repo).
-- **Track B**: **`UpdateDocumentation`** + **`git-checkpoint`**.
-- **Track C**: **`GenerateDeployment`** artifacts + **`git-checkpoint`**.
+- **Track B**: **`GeneratePerformanceTests`** — smoke + load baseline; writes `perf-results.json`.
+- **Track C**: **`UpdateDocumentation`** + **`git-checkpoint`**.
+- **Track D**: **`GenerateDeployment`** artifacts + **`git-checkpoint`**.
 - Do **not** parallelize if tracks share conflicting files or lock the same resources—serialize in that case.
 
 ### Phase 7 — Quality gate (`QualityGate`)
@@ -166,10 +171,11 @@ Default thresholds unless the repo overrides them:
 - **Reviews**: zero open Critical/Major items; minors may be tracked as debt only if policy allows.
 - **E2E**: smoke or full suite per project definition — must pass for gate **pass**.
 
-### Phase 8 — Complete story (`CompleteStory`)
+### Phase 8 — Complete story (`CompleteStory`) + memory wrap-up
 
 - If gate **pass** and optional human approval satisfied, invoke **`CompleteStory`** (PR merge prep, Jira transitions, release notes pointers per project).
 - Mark story `completed` in session.
+- Invoke **`session-wrap-up`** — persist progress, decisions, and open items to `./memory/`.
 
 ---
 
@@ -183,8 +189,8 @@ Default thresholds unless the repo overrides them:
 
 ## Multi-story coordination
 
-- After each story completes, compact progress into session and Memory Log summary.
-- When all stories complete, produce a **final report**: stories done, links, metrics, open risks.
+- After each story completes, compact progress into session and invoke **`session-wrap-up`** to persist to `./memory/`.
+- When all stories complete, run a **final `session-wrap-up`** and produce a **final report**: stories done, links, metrics, open risks.
 
 ## Terminal hygiene
 

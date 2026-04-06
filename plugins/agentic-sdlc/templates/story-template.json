@@ -7,6 +7,7 @@
     "Scenario: Short name\nGiven preconditions\nWhen the user performs the action\nThen observable outcome",
     "Scenario: Error path\nGiven invalid input\nWhen submission occurs\nThen validation message is shown"
   ],
+  "requirement_refs": ["CAP-001", "CAP-003"],
   "estimated_effort_days": null,
   "story_points": null,
   "dependencies": [],

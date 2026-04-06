@@ -1,0 +1,50 @@
+# Dependencies
+**/node_modules/
+**/.venv/
+**/venv/
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+
+# Build outputs
+**/dist/
+**/build/
+**/target/
+**/bin/
+**/obj/
+**/*.egg-info/
+
+# IDE and editor
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Environment and secrets
+**/.env
+**/.env.local
+**/.env.*.local
+**/credentials.json
+**/secrets.yaml
+
+# Test outputs (keep templates, ignore generated)
+**/coverage/
+**/htmlcov/
+**/.pytest_cache/
+**/.nyc_output/
+
+# OS files
+desktop.ini
+ehthumbs.db
+
+# Agent runtime artifacts (generated per session, not committed)
+**/context/sdlc-session.json
+**/context/test-results.json
+**/context/coverage.json
+**/context/e2e-results.json
+**/context/quality-gate-report.md
+
+# Terminal state files
+terminals/

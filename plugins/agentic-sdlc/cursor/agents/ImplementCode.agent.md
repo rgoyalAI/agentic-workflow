@@ -121,7 +121,7 @@ Record exact commands run in **Execution Summary**. If a command is unknown, sea
 ### 7. Dependency extras verification
 
 Before considering implementation complete, verify that every optional feature used in code has its extras declared in the dependency manifest:
-- Python: `pydantic[email]` for `EmailStr`, `uvicorn[standard]` for reload/watch, `sqlalchemy[asyncio]` for async engines, `passlib[bcrypt]` for bcrypt hashing, `python-jose[cryptography]` for JWT.
+- Python: `pydantic[email]` for `EmailStr`, `uvicorn[standard]` for reload/watch, `sqlalchemy[asyncio]` for async engines, `bcrypt` for password hashing (NOT `passlib[bcrypt]` — see 7c), `python-jose[cryptography]` for JWT.
 - Node: peer dependencies and optional deps (e.g., `@types/*` for TypeScript).
 - Java: optional Maven/Gradle dependencies must be scoped correctly.
 
@@ -141,7 +141,7 @@ For Python: use `bcrypt` directly (`bcrypt.hashpw`/`bcrypt.checkpw`), NOT `passl
 - Never commit secrets; use env vars or secret managers per `standards/coding/*.md`.
 - Validate external input at boundaries even when rushing to green tests.
 
-### 8. Commit hygiene
+### 9. Commit hygiene
 
 - Prefer small logical commits during development; the orchestrator may squash — describe intent in **implementation-log.md**.
 - Do not amend published history unless orchestrator requests.

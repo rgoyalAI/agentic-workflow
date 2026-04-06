@@ -1,5 +1,10 @@
 {
   "hooks": {
+      "Notification": [
+        {
+          "hooks": [{ "type": "command", "command": "notify-send 'Claude needs input'" }]
+        }
+      ],
     "PreToolUse": [
       {
         "matcher": "Bash",
@@ -20,6 +25,11 @@
             "type": "command",
             "shell": "powershell",
             "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/audit-edit.ps1"
+          },
+          { 
+            "type": "command", 
+            "shell": "powershell",
+          "command": "npx prettier --write $FILE" 
           }
         ]
       }

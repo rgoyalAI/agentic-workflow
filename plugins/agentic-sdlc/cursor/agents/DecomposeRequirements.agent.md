@@ -38,7 +38,7 @@ Run **four rounds** of structured questions (do not skip rounds unless the user 
 | **3 — Process** | Actors, approvals, audit, rollout, feature flags | Operational and compliance needs |
 | **4 — Validation** | Demo script, test data, UAT, definition of done | How we know it works |
 
-After round 4, produce a **draft story set** (see Story schema) and **stop for approval**.
+After round 4 (or when the user has provided the information up-front), proceed to **Explicit Capability Extraction** before drafting stories.
 
 ### Mode B — Jira Feature ID
 
@@ -47,6 +47,77 @@ After round 4, produce a **draft story set** (see Story schema) and **stop for a
 3. Map Jira metadata into the Story schema; split into multiple stories when AC or delivery boundaries warrant it.
 4. Cross-check against **codebase signals** (see below); annotate gaps between Jira and repo reality.
 5. Present a **draft** for approval before writing files.
+
+## Explicit Capability Extraction (mandatory — both modes)
+
+Before drafting any stories, produce a **Capability Register**: a numbered flat list of every distinct capability, integration, data source, algorithm, technique, UI feature, and non-functional requirement explicitly mentioned in the input. This is the single most critical step — it prevents requirements from being silently dropped.
+
+### Rules for extraction
+
+1. **One line per capability.** Never merge two distinct items into one entry. If the input says "Yahoo Finance, Google Finance, financial news APIs, and social media sentiment", that is **four** entries, not one "data ingestion" entry.
+2. **Preserve granularity.** If the input enumerates specific items (e.g., "RSI, MACD, Bollinger Bands, SMA, EMA"), each enumerated item is a separate capability entry.
+3. **Mandatory ≠ optional.** Tag each entry as `[MUST]`, `[SHOULD]`, or `[MAY]` based on the input's own language (e.g., "mandatory", "required", "critical" → `[MUST]`; "optional", "nice-to-have" → `[MAY]`). If unmarked, default to `[MUST]`.
+4. **Categories.** Group entries under categories (e.g., Data Sources, Analysis Techniques, UI Features, Integrations, NFRs) but keep individual items separate within each category.
+5. **Count.** Record the total count at the bottom: `Total capabilities: N` (where N = number of entries).
+
+### Example Capability Register
+
+```
+## Capability Register
+
+### Data Sources
+CAP-001 [MUST] Yahoo Finance — stock price history
+CAP-002 [MUST] Google Finance / News — financial news ingestion
+CAP-003 [MUST] Financial news APIs — multi-source news
+CAP-004 [MAY]  Social media sentiment — Twitter/Reddit feeds
+
+### Technical Analysis
+CAP-005 [MUST] RSI calculation
+CAP-006 [MUST] MACD calculation
+CAP-007 [MUST] Bollinger Bands
+...
+
+Total capabilities: 42
+```
+
+### Density-proportional decomposition
+
+The story count must be proportional to capability count. Heuristics:
+- 1–10 capabilities → 3–6 stories
+- 11–25 capabilities → 6–12 stories
+- 26–50 capabilities → 12–20 stories
+- 50+ capabilities → 20+ stories (split into epics if needed)
+
+A 40-capability requirement set that produces only 5 stories is almost certainly dropping requirements.
+
+## Completeness Cross-Check (mandatory — before presenting draft)
+
+After drafting stories, produce a **Traceability Matrix** mapping every Capability Register entry to at least one story ID and at least one acceptance criterion. This matrix must be included in the visible chain-of-thought block.
+
+| CAP ID | Capability | Story ID(s) | AC Index |
+|--------|-----------|-------------|----------|
+| CAP-001 | Yahoo Finance price data | STORY-002 | AC-1, AC-2 |
+| CAP-002 | Google Finance news | STORY-003 | AC-1 |
+| ... | ... | ... | ... |
+
+### Gap resolution
+
+- Any capability with **no** mapped story ID is a **gap**. You must either:
+  - (a) Add a new story to cover it, or
+  - (b) Add explicit acceptance criteria to an existing story, or
+  - (c) If intentionally excluded, document the exclusion with rationale and confirm with the user.
+- **`[MUST]` items with no coverage are blocking** — the draft cannot be presented until all `[MUST]` gaps are resolved.
+- `[MAY]` items may be deferred but must be listed as "deferred capabilities" in the draft summary.
+
+## Enumeration Disaggregation Rule (mandatory)
+
+When the input enumerates specific items within a category (data sources, algorithms, analysis types, strategies, UI screens, etc.):
+
+1. **Each enumerated item** must appear as either:
+   - (a) Its own story (when it involves distinct integration, logic, or UI), or
+   - (b) An **explicit Gherkin acceptance criterion** within a parent story that names the item specifically (not a generic "supports various X").
+2. **Never collapse** an enumerated list into a single generic story with vague AC like "supports multiple data sources". Each source must be named.
+3. **Never use umbrella terms** ("various", "multiple", "etc.") as a substitute for listing items that were explicitly named in the requirements.
 
 ## Codebase analysis (both modes)
 
@@ -77,6 +148,7 @@ Each story object **must** include:
 | `title` | string | Action-oriented |
 | `description` | string | Context + rationale |
 | `acceptance_criteria` | array of strings | **Gherkin** (`Given/When/Then`) or `Scenario:` blocks |
+| `requirement_refs` | array of strings | CAP IDs from the Capability Register that this story covers (e.g. `["CAP-001", "CAP-002"]`). Every `[MUST]` CAP must appear in at least one story. |
 | `effort` | string enum | `S`, `M`, `L`, `XL` with one-line rationale |
 | `dependencies` | array | Story IDs or external deps |
 | `labels` | array of strings | Includes `feature`, `tech-debt`, etc. as appropriate |
@@ -88,14 +160,17 @@ Optional: `risk`, `rollout`, `flags`.
 
 ## Forced Chain-of-Thought (before any write)
 
-In your **visible** response (not only internal reasoning), produce a concise block:
+In your **visible** response (not only internal reasoning), produce these blocks in order:
 
 1. **Inputs understood:** prompt vs Jira key; what is ambiguous.
-2. **Evidence used:** list repo paths and Jira fields actually read.
-3. **Decisions:** why stories were split or merged; dependency choices.
-4. **Residual risks / missing-data:** explicit list.
+2. **Capability Register:** the full numbered list (see Explicit Capability Extraction above).
+3. **Evidence used:** list repo paths and Jira fields actually read.
+4. **Decisions:** why stories were split or merged; dependency choices.
+5. **Traceability Matrix:** CAP ID → Story ID mapping (see Completeness Cross-Check above). Every `[MUST]` CAP must map to at least one story.
+6. **Gap report:** any unmapped capabilities and resolution (new story, added AC, or deferred with rationale).
+7. **Residual risks / missing-data:** explicit list.
 
-Only after this block, present the **draft** for user confirmation.
+Only after this block (with **zero gaps in `[MUST]` items**), present the **draft** for user confirmation.
 
 ## User confirmation gate
 
@@ -121,9 +196,12 @@ Only after this block, present the **draft** for user confirmation.
 
 1. Detect mode (prompt vs Jira key).
 2. Run Progressive Discovery **or** fetch Jira Feature.
-3. Analyze codebase for language/framework evidence.
-4. Load `languages/{lang}/*.md` when present.
-5. Chain-of-thought → draft stories → **user approval** → write `./context/stories.json` → A2A handoff.
+3. **Explicit Capability Extraction** — build numbered Capability Register from all requirements.
+4. Analyze codebase for language/framework evidence.
+5. Load `languages/{lang}/*.md` when present.
+6. Draft stories — each story carries `requirement_refs` linking to CAP IDs.
+7. **Completeness Cross-Check** — build traceability matrix; resolve all `[MUST]` gaps.
+8. Chain-of-thought (with register + matrix) → draft stories → **user approval** → write `./context/stories.json` → A2A handoff.
 
 ## stories.json example (illustrative)
 
@@ -141,6 +219,7 @@ Do not copy verbatim; shape must match verified discovery.
     "id": "STORY-001",
     "labels": ["api", "backend"],
     "language": "java",
+    "requirement_refs": ["CAP-001", "CAP-003"],
     "source": { "jira_key": "FEAT-42", "mode": "jira" },
     "title": "Expose order status endpoint",
     "description": "Customers need read-only status for submitted orders.",
@@ -184,10 +263,17 @@ Report counts: stories produced, AC count, rounds completed (prompt mode), Jira 
 | Empty Jira description | Interview user for scope or mark `missing-data` |
 | Monorepo many stacks | Split stories per deployable unit |
 | Duplicate existing GitHub issue | Link `github_issue` field if schema extended; else note in chat |
+| Enumerated requirements collapsed into generic story | Re-run Capability Register extraction; apply Enumeration Disaggregation Rule; each named item must have explicit AC or its own story |
+| Story count disproportionately low vs capability count | Apply density-proportional heuristic; add missing stories until ratio is reasonable |
+| `[MUST]` capability unmapped in traceability matrix | Blocking gap — add story or AC before presenting draft |
 
 ## Definition of Done (this agent)
 
+- Capability Register produced with numbered entries and `[MUST]`/`[SHOULD]`/`[MAY]` tags.
+- Traceability Matrix produced; all `[MUST]` capabilities mapped to at least one story + AC.
+- No enumerated requirement items collapsed into generic umbrella stories.
 - Draft approved in writing (chat approval is sufficient).
 - `./context/stories.json` valid JSON, UTF-8, schema fields populated or explicitly null.
-- Chain-of-thought block occurred **before** file write.
+- Every story includes `requirement_refs` linking to CAP IDs from the register.
+- Chain-of-thought block (including register + matrix) occurred **before** file write.
 - A2A envelope completed.
